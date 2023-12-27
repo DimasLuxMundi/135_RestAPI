@@ -34,23 +34,25 @@ import com.example.databaseapi.R
 import com.example.databaseapi.model.Kontak
 import com.example.databaseapi.ui.home.viewmodel.KontakUIState
 
-@Composable
-fun HomeScreen(
-    kontakUIState: KontakUIState,
-    retryAction: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    when (kontakUIState) {
-        is KontakUIState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
-        is KontakUIState.Success -> KontakLayout(
-            kontak = kontakUIState.kontak,
-            modifier = modifier.fillMaxWidth()
-        )
-
-        is KontakUIState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
-    }
-
-}
+//@Composable
+//fun HomeScreen(
+//    kontakUIState: KontakUIState,
+//    retryAction: () -> Unit,
+//    modifier: Modifier = Modifier
+//) {
+//    when (kontakUIState) {
+//        is KontakUIState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
+//        is KontakUIState.Success -> KontakLayout(
+//            kontak = kontakUIState.kontak,
+//            modifier = modifier.fillMaxWidth(),
+//
+//
+//        )
+//
+//        is KontakUIState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
+//    }
+//
+//}
 
 /*
 The Home screen displaying the loading message
@@ -98,7 +100,9 @@ fun OnError(
 @Composable
 fun KontakLayout(
     kontak: List<Kontak>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDetailClick: (Kontak) -> Unit,
+    onDeleteClick: (Kontak) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier,
@@ -108,7 +112,11 @@ fun KontakLayout(
         items(kontak) { kontak ->
             KontakCard(kontak = kontak, modifier = Modifier
                 .fillMaxWidth()
-                .clickable { })
+                .clickable { onDetailClick(kontak) },
+                onDeleteClick = {
+                    onDeleteClick(kontak)
+                }
+            )
 
         }
     }
@@ -151,13 +159,14 @@ fun KontakCard(
             Text(
                 text = kontak.alamat,
                 style = MaterialTheme.typography.titleMedium
-                )
+            )
 
             Spacer(Modifier.weight(1f))
-            IconButton(onClick = {onDeleteClick(kontak)}) {
+            IconButton(onClick = { onDeleteClick(kontak) }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = null)
+                    contentDescription = null
+                )
 
             }
 
